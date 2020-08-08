@@ -1,34 +1,60 @@
-import React from 'react';
-import './styles.css'
-import whatsappIcon from '../../assets/images/icons/whatsapp.svg';
+import React from "react";
 
-function TeacherItem() {
-    return (
-        <article className="teacher-item">
-            <header>
-                <img src="https://scontent.fcwb2-1.fna.fbcdn.net/v/t1.0-9/90427845_2828769603837942_6951826952839757824_n.jpg?_nc_cat=103&_nc_sid=09cbfe&_nc_eui2=AeF8LkjWxW_Mws_jRUGejnxsqGZReJD_iQioZlF4kP-JCNYf6Z78WMADtT4R8tr5HU7rd4_nlawafT-99-_3OXcv&_nc_ohc=URdgyx-OAuYAX_Z-bFO&_nc_ht=scontent.fcwb2-1.fna&oh=300c6e632b889f2c962808e6da5c35fb&oe=5F4F1EF2" alt=""/>
-            <div>
-                <strong>
-                    Diego Ceccon
-                </strong>
-                <span>Química</span>
-            </div>
-            </header>
+import api from "../../services/api";
 
-            <p>Entusiasta das melhores tecnologias de química avançada
-            <br/><br/>
-            Apaixonado por explodir coisas em laboratórios e por mudar a vida das pessoas através de experiências.</p>
+import whatsappIcon from "../../assets/images/icons/whatsapp.svg";
 
-            <footer>
-                <p>Preço/hora</p>
-                <strong>R$ 80,00</strong>
-                <button type="button">
-                    <img src={whatsappIcon} alt="Whatsapp"/>
-                    Entrar em contato
-                </button>
-            </footer>
-        </article>
-    )
+import "./styles.css";
+
+export interface Teacher {
+  id: number;
+  avatar: string;
+  bio: string;
+  cost: number;
+  name: string;
+  subject: string;
+  whatsapp: string;
 }
 
-export default TeacherItem
+interface TeacherItemProps {
+  teacher: Teacher;
+}
+
+const TeacherItem: React.FC<TeacherItemProps> = ({ teacher }) => {
+  function createNewConnection() {
+    api.post("connections", {
+      user_id: teacher.id,
+    });
+  }
+
+  return (
+    <article className='teacher-item'>
+      <header>
+        <img src={teacher.avatar} alt={teacher.name} />
+        <div>
+          <strong>{teacher.name}</strong>
+          <span>{teacher.subject}</span>
+        </div>
+      </header>
+
+      <p>{teacher.bio}</p>
+
+      <footer>
+        <p>
+          Preço/hora
+          <strong>R$ {teacher.cost}</strong>
+        </p>
+        <a
+          target='_blank'
+          onClick={createNewConnection}
+          href={`https://wa.me/${teacher.whatsapp}`}
+        >
+          <img src={whatsappIcon} alt='Whatsapp' />
+          Entrar em contato
+        </a>
+      </footer>
+    </article>
+  );
+};
+
+export default TeacherItem;
